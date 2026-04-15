@@ -2,11 +2,18 @@ from __future__ import annotations
 
 from io import BytesIO
 from pathlib import Path
+import sys
 
 import pandas as pd
 import streamlit as st
 
-from src.dynamic_pricing_project import FIGURE_DIR, run_analysis
+ROOT_DIR = Path(__file__).resolve().parent
+SRC_DIR = ROOT_DIR / "src"
+
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+from dynamic_pricing_project import FIGURE_DIR, run_analysis
 
 
 st.set_page_config(
