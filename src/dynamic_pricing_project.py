@@ -69,12 +69,15 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
     df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], errors="coerce")
 
+    # Normalize categorical columns to string so downstream encoders do not see mixed types.
+    df["StockCode"] = df["StockCode"].astype(str).str.strip()
+
     if "Description" in df.columns:
-        df["Description"] = df["Description"].fillna("Unknown")
+        df["Description"] = df["Description"].fillna("Unknown").astype(str).str.strip()
     if "CustomerID" in df.columns:
         df["CustomerID"] = df["CustomerID"].fillna(-1)
     if "Country" in df.columns:
-        df["Country"] = df["Country"].fillna("Unknown")
+        df["Country"] = df["Country"].fillna("Unknown").astype(str).str.strip()
 
     df = df.dropna(subset=["InvoiceDate", "StockCode", "Quantity", "UnitPrice"])
     df = df[df["Quantity"] > 0]
