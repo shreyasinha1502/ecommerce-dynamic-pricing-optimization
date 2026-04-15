@@ -1,19 +1,25 @@
 from __future__ import annotations
 
+import importlib.util
 from io import BytesIO
 from pathlib import Path
-import sys
 
 import pandas as pd
 import streamlit as st
 
 ROOT_DIR = Path(__file__).resolve().parent
 SRC_DIR = ROOT_DIR / "src"
+MODULE_PATH = SRC_DIR / "dynamic_pricing_project.py"
 
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
+spec = importlib.util.spec_from_file_location("dynamic_pricing_project", MODULE_PATH)
+if spec is None or spec.loader is None:
+    raise ModuleNotFoundError(f"Could not load module from {MODULE_PATH}")
 
-from dynamic_pricing_project import FIGURE_DIR, run_analysis
+dynamic_pricing_project = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(dynamic_pricing_project)
+
+FIGURE_DIR = dynamic_pricing_project.FIGURE_DIR
+run_analysis = dynamic_pricing_project.run_analysis
 
 
 st.set_page_config(
